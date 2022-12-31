@@ -1,0 +1,13 @@
+每种精灵抓多少次才能伪装: 5
+#玩家数据可以不用管
+伪装更新: 5
+#1秒为20tick上方单位是tick
+玩家数据:
+  GSQ_Lin:
+    可伪装:
+      - 'Abomasnow'
+    记录:
+      - 'Absol'
+      - 'Absol'
+      - 'Absol'
+      - 'Absol'
