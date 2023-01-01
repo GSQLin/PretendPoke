@@ -1,5 +1,7 @@
 package me.gsqlin.pretendpoke;
 
+import me.gsqlin.pretendpoke.forgeEvents.pokeBallImpactEvents.EventM;
+import me.gsqlin.pretendpoke.forgeEvents.pokeBallImpactEvents.EventO;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -16,9 +18,8 @@ public class PretendPoke extends JavaPlugin {
         Commands cmd = new Commands();
         command.setExecutor(cmd);
         command.setTabCompleter(cmd);
-        PixelUtil.registerForgeEvent(plugin);
+        registerListener();
 
-        getServer().getPluginManager().registerEvents(new GSQListener(),this);
         getLogger().info("§aPlugin loaded");
     }
 
@@ -31,5 +32,16 @@ public class PretendPoke extends JavaPlugin {
     public void reload(){
         saveDefaultConfig();
         reloadConfig();
+    }
+
+    public void registerListener(){
+        PixelUtil.registerForgeEvent(plugin);
+        getServer().getPluginManager().registerEvents(new GSQListener(),this);
+        //特殊事件单独转发
+        if (PixelUtil.bukkitVersion.equalsIgnoreCase("1.12.2")){
+            getServer().getPluginManager().registerEvents(new EventO(),this);
+        }else{
+            getServer().getPluginManager().registerEvents(new EventM(),this);
+        }
     }
 }

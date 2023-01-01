@@ -1,14 +1,12 @@
 package me.gsqlin.pretendpoke;
 
-import com.pixelmonmod.pixelmon.api.events.BattleStartedEvent;
-import com.pixelmonmod.pixelmon.api.events.BeatWildPixelmonEvent;
-import com.pixelmonmod.pixelmon.api.events.CaptureEvent;
-import com.pixelmonmod.pixelmon.api.events.ThrowPokeballEvent;
-import com.pixelmonmod.pixelmon.api.pokemon.Pokemon;
+import com.pixelmonmod.pixelmon.api.events.*;
 import com.pixelmonmod.pixelmon.battles.controller.participants.BattleParticipant;
 import com.pixelmonmod.pixelmon.battles.controller.participants.PixelmonWrapper;
 import com.pixelmonmod.pixelmon.battles.controller.participants.PlayerParticipant;
 import me.gsqlin.pretendpoke.forgeEvents.MyForgeEvent;
+import me.gsqlin.pretendpoke.forgeEvents.pokeBallImpactEvents.PokeBallIEvent;
+import me.gsqlin.pretendpoke.pretendEvents.PickOffPretend;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -18,23 +16,49 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.EquipmentSlot;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Optional;
 
 import static me.gsqlin.pretendpoke.GSQUtil.*;
 import static me.gsqlin.pretendpoke.PixelUtil.*;
 import static me.gsqlin.pretendpoke.PretendPoke.plugin;
 
 public class GSQListener implements Listener {
+    public static Class<?> pokeBallIClass;
+    static {
+        try {
+            pokeBallIClass = bukkitVersion.equalsIgnoreCase("1.12.2")?
+                    Class.forName("com.pixelmonmod.pixelmon.api.events.PokeballImpactEvent"):
+                    Class.forName("com.pixelmonmod.pixelmon.api.events.PokeBallImpactEvent");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    @EventHandler
+    public void pokeBallEvent(PokeBallIEvent event) throws InvocationTargetException, IllegalAccessException {
+        Object e = pokeBallIClass.cast(event.getEvent());
+        Object waitO = bukkitVersion.equalsIgnoreCase("1.12.2")?
+                getMethod(e.getClass(),"getEntityHit").invoke(e):
+                ((Optional<net.minecraft.entity.Entity>)getMethod(e.getClass(),"getEntityHit").invoke(e)).get();
+        if (waitO == null) return;
+        Entity entity = getBukkitEntity(waitO);
+        if (entity == null) return;
+        if (entityMap.containsValue(entity)){
+            getMethod(e.getClass(),"setCanceled",boolean.class).invoke(e,true);
+        }
+    }
+
     @EventHandler
     public void play(MyForgeEvent event) throws Exception {
+        //防止伪装宝可梦模型跑去和别的宝可梦对战
         if (event.getForgeEvent() instanceof BattleStartedEvent){
             BattleStartedEvent e = (BattleStartedEvent) event.getForgeEvent();
             Object bc = getField(e.getClass(),e,"bc");
-            List<PlayerParticipant> playerParticipants = (List<PlayerParticipant>) getMethod(bc.getClass(),"getPlayers").invoke(bc);
             if (bc == null) return;
             List<Entity> entities = new ArrayList<>();
             for (BattleParticipant participant : (List<BattleParticipant>) getField(bc.getClass(),bc,"participants")) {
@@ -51,26 +75,11 @@ public class GSQListener implements Listener {
             for (Map.Entry<String, Entity> entry : entityMap.entrySet()) {
                 if (entities.contains(entry.getValue())){
                     e.setCanceled(true);
-                    if (!playerParticipants.isEmpty()){
-                        List<Player> players = new ArrayList<>();
-                        for (PlayerParticipant participant : playerParticipants) {
-                            players.add((Player) getBukkitEntity(getField(participant.getClass(),participant,"player")));
-                        }
-                        Player p = Bukkit.getPlayer(entry.getKey());
-                        if (players.contains(p)){
-                            p.sendMessage("§7宝可梦不能丢球进行对战的哦");
-                        }else{
-                            players.remove(p);
-                            p.sendMessage("§7你的伪装被人识破");
-                            players.get(0).sendMessage("§7你成功识破玩家:§a"+p.getName()+"§7的伪装");
-                            stopPretend(p);
-                        }
-                    }
-                    break;
                 }
             }
         }
-        if (event.getForgeEvent() instanceof BeatWildPixelmonEvent){
+        //防止出现问题的代码
+/*        if (event.getForgeEvent() instanceof BeatWildPixelmonEvent){
             BeatWildPixelmonEvent e = (BeatWildPixelmonEvent) event.getForgeEvent();
             Entity entity = getBukkitEntity(getMethod(e.wpp.getClass(),"getEntity").invoke(e.wpp));
             for (Map.Entry<String, Entity> entry : entityMap.entrySet()) {
@@ -87,37 +96,10 @@ public class GSQListener implements Listener {
                     break;
                 }
             }
-        }
-        if (event.getForgeEvent() instanceof ThrowPokeballEvent){
-            ThrowPokeballEvent e = (ThrowPokeballEvent) event.getForgeEvent();
-            Player p = (Player) getBukkitEntity(getField(e.getClass(),e,"player"));
-            if (entityMap.containsKey(p.getName())) {
-                e.setCanceled(true);
-                p.sendMessage("§7催眠: 你是一个宝可梦,所以你不能丢球");
-            }
-        }
-        if (event.getForgeEvent() instanceof CaptureEvent.StartCapture){
-            CaptureEvent.StartCapture e = (CaptureEvent.StartCapture) event.getForgeEvent();
-            Player p = (Player) getBukkitEntity(getField(e.getClass(),e,"player"));
-            Object oPoke = getField(e.getClass(),e,"pokemon");
-            for (Map.Entry<String, Entity> map:entityMap.entrySet()){
-                if (map.getValue().equals(getBukkitEntity(oPoke))){
-                    e.setCanceled(true);
-                    Player player = Bukkit.getPlayer(map.getKey());
-                    if (player.equals(p)){
-                        p.sendMessage("§7这只是一个伪装皮套");
-                    }else{
-                        p.sendMessage("§7这个宝可梦是玩家伪装的揭穿他!");
-                        player.sendMessage("§7你被精灵球砸了一下,可能已被人发现是伪装的了");
-                    }
-                    break;
-                }
-            }
-        }
+        }*/
         if (event.getForgeEvent() instanceof CaptureEvent.SuccessfulCapture){
             CaptureEvent.SuccessfulCapture e = (CaptureEvent.SuccessfulCapture) event.getForgeEvent();
             Player p = (Player) getBukkitEntity(getField(e.getClass(),e,"player"));
-            p.sendMessage("hi");
             Object poke = getField(e.getClass(),e,"pokemon");
             String path = "玩家数据."+p.getName()+".记录";
             String cpPath = "玩家数据."+p.getName()+".可伪装";
@@ -137,7 +119,6 @@ public class GSQListener implements Listener {
             plugin.getConfig().set(path,pokelist);
             plugin.getConfig().set(cpPath,canPre);
             plugin.saveConfig();
-            plugin.reload();
         }
     }
     @EventHandler
@@ -152,17 +133,29 @@ public class GSQListener implements Listener {
         }
     }
     @EventHandler
-    public void onAttackEntity(PlayerInteractEntityEvent event){
+    public void onInteractEntity(PlayerInteractEntityEvent event){
+        if (!plugin.getConfig().getBoolean("扒拉伪装"))return;
         Player p = event.getPlayer();
+        if (event.getHand().equals(EquipmentSlot.OFF_HAND))return;
         for (Map.Entry<String, Entity> entry : entityMap.entrySet()) {
             if (entry.getValue().equals(event.getRightClicked())){
                 event.setCancelled(true);
                 Player player = Bukkit.getPlayer(entry.getKey());
+                PickOffPretend pickEvent;
+                String[] messages = new String[2];
                 if (p.equals(player)){
-                    p.sendMessage("§7不要对自己的伪装皮套做奇奇怪怪的事情");
+                    messages[0] = "§7不要对自己的伪装皮套做奇奇怪怪的事情";
+                    pickEvent = new PickOffPretend(p,null,entry.getValue(),messages);
+                    Bukkit.getPluginManager().callEvent(pickEvent);
+                    p.sendMessage(pickEvent.getMessages()[0]);
                 }else{
-                    p.sendMessage("§7你扒拉了一下这个宝可梦,发现好像是皮套");
-                    player.sendMessage("§7你的伪装皮套被扒拉了一下");
+                    messages[0] = "§7你揭穿了玩家:§3"+player.getName()+"§7的伪装";
+                    messages[1] = "§6你被掀了皮套————";
+                    pickEvent = new PickOffPretend(p,player,entry.getValue(),messages);
+                    Bukkit.getPluginManager().callEvent(pickEvent);
+                    p.sendMessage(pickEvent.getMessages()[0]);
+                    stopPretend(player);
+                    player.sendMessage(pickEvent.getMessages()[1]);
                 }
                 break;
             }

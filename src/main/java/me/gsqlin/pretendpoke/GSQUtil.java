@@ -1,12 +1,15 @@
 package me.gsqlin.pretendpoke;
 
 import com.pixelmonmod.pixelmon.api.pokemon.Pokemon;
+import me.gsqlin.pretendpoke.pretendEvents.EndPretendPokeEvent;
+import me.gsqlin.pretendpoke.pretendEvents.StartPretendPokeEvent;
 import net.minecraft.network.play.server.SPacketDestroyEntities;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scoreboard.Scoreboard;
@@ -32,40 +35,46 @@ public class GSQUtil {
         entityMap.remove(p.getName());
         bossBar.addPlayer(p);
         bossBar.setVisible(true);
-        Pokemon pokemon = createPokemon(name);
+        Pokemon poke = createPokemon(name);
+        StartPretendPokeEvent startEvent = new StartPretendPokeEvent(p,poke);
+        Bukkit.getPluginManager().callEvent(startEvent);
+        if (startEvent.isCancelled())return false;
+        Player eventPlayer = startEvent.getPlayer();
+        Pokemon pokemon = startEvent.getPokemon();
         Team team;
         try {
-            team = scoreboard.registerNewTeam(p.getName()+"伪装");
+            team = scoreboard.registerNewTeam(eventPlayer.getName()+"伪装");
         }catch (IllegalArgumentException e){
-            p.sendMessage("§c错误!编号:004");
+            eventPlayer.sendMessage("§c错误!编号:004");
             plugin.getLogger().info("§c错误!编号:004");
             e.printStackTrace();
             return false;
         }
         team.setOption(Team.Option.COLLISION_RULE, Team.OptionStatus.NEVER);
-        team.addEntry(p.getUniqueId().toString());
+        team.addEntry(eventPlayer.getUniqueId().toString());
         BukkitRunnable runnable = new BukkitRunnable() {
             @Override
             public void run() {
-                Team te = scoreboard.getTeam(p.getName()+"伪装");
+                Team te = scoreboard.getTeam(eventPlayer.getName()+"伪装");
                 if (te == null){
                     cancel();
-                    stopPretend(p);
+                    stopPretend(eventPlayer);
                     return;
                 }
-                Player player = Bukkit.getPlayer(p.getName());
+                Player player = Bukkit.getPlayer(eventPlayer.getName());
                 if (player == null){
                     cancel();
-                    stopPretend(p);
+                    stopPretend(eventPlayer);
                 }else{
-                    Entity entity;
+                    LivingEntity entity;
                     try {
-                        entity = getBukkitEntity(getOrSpawnPixelmon(pokemon,player));
+                        entity = (LivingEntity)getBukkitEntity(getOrSpawnPixelmon(pokemon,player));
                         entity.teleport(player.getLocation());
                         entity.getLocation().setYaw(player.getEyeLocation().getYaw());
                         if (!entity.isInvulnerable()) entity.setInvulnerable(true);
+                        if (entity.hasAI())entity.setAI(false);
                         if (!entityMap.containsKey(player.getName())){
-                            entityMap.put(player.getName(),entity);
+                            entityMap.put(player.getName(), entity);
                             hideEntity(player,entity);
                         }else {entityMap.replace(player.getName(),entity);}
                     } catch (Exception e) {
@@ -81,11 +90,15 @@ public class GSQUtil {
             }
         };
         runnable.runTaskTimer(plugin,0,plugin.getConfig().getInt("伪装更新"));
-        runnableMap.put(p.getName(),runnable);
-        for (Player onlineP:Bukkit.getOnlinePlayers()) onlineP.hidePlayer(plugin,p);
+        runnableMap.put(eventPlayer.getName(),runnable);
+        for (Player onlineP:Bukkit.getOnlinePlayers()) onlineP.hidePlayer(plugin,eventPlayer);
         return true;
     }
-    public static boolean stopPretend(Player p) {
+    public static boolean stopPretend(Player player) {
+        EndPretendPokeEvent event = new EndPretendPokeEvent(player,entityMap.get(player.getName()));
+        Bukkit.getPluginManager().callEvent(event);
+        if (event.isCancelled()) return false;
+        Player p = event.getPlayer();
         bossBar.removePlayer(p);
         if (!runnableMap.containsKey(p.getName()))return false;
         if (runnableMap.containsKey(p.getName())) {
@@ -94,7 +107,7 @@ public class GSQUtil {
         }
         Team team = scoreboard.getTeam(p.getName()+"伪装");
         if (team != null) team.unregister();
-        Entity entity = Bukkit.getEntity(entityMap.get(p.getName()).getUniqueId());
+        Entity entity = Bukkit.getEntity(event.getPokemon().getUniqueId());
         try {
             getMinecraftEntity(entity).func_70106_y();
             entity.remove();

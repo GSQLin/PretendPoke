@@ -26,6 +26,10 @@ public class Commands implements CommandExecutor , TabCompleter {
     };
     @Override
     public boolean onCommand(CommandSender sender,Command command,String label,String[] args) {
+        if (!plugin.getConfig().getBoolean("开启原功能")){
+            sender.sendMessage("§c本插件原功能已关闭");
+            return false;
+        }
         if (args.length>=1){
             Player p = sender instanceof Player? (Player) sender :null;
             if (args[0].equalsIgnoreCase("reload")){
