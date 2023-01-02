@@ -237,4 +237,12 @@ public class PixelUtil{
         return (Pokemon) getMethod(pixelmonEntity.getClass(),bukkitVersion.equalsIgnoreCase("1.12.2")?
                 "getPokemonData":"getPokemon").invoke(pixelmonEntity);
     }
+    //发送数据包(发包) 需要把包和玩家写进去
+    public static void sendPacket(Player player,Object packet) throws Exception{
+        Object o = getPlayer(player);
+        Object net = getField(o.getClass(),o,"field_71135_a");
+        getMethod(net.getClass(),"func_147359_a",bukkitVersion.equalsIgnoreCase("1.12.2")?
+                Class.forName("net.minecraft.network.Packet"):
+                Class.forName("net.minecraft.network.IPacket")).invoke(net,packet);
+    }
 }

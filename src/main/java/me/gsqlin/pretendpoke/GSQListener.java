@@ -44,7 +44,7 @@ public class GSQListener implements Listener {
         Object e = pokeBallIClass.cast(event.getEvent());
         Object waitO = bukkitVersion.equalsIgnoreCase("1.12.2")?
                 getMethod(e.getClass(),"getEntityHit").invoke(e):
-                ((Optional<net.minecraft.entity.Entity>)getMethod(e.getClass(),"getEntityHit").invoke(e)).get();
+                getMethod(e.getClass(),"getEntityHit").invoke(e) == null?null:((Optional<net.minecraft.entity.Entity>)getMethod(e.getClass(),"getEntityHit").invoke(e)).get();
         if (waitO == null) return;
         Entity entity = getBukkitEntity(waitO);
         if (entity == null) return;

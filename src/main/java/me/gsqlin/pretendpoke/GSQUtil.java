@@ -3,7 +3,11 @@ package me.gsqlin.pretendpoke;
 import com.pixelmonmod.pixelmon.api.pokemon.Pokemon;
 import me.gsqlin.pretendpoke.pretendEvents.EndPretendPokeEvent;
 import me.gsqlin.pretendpoke.pretendEvents.StartPretendPokeEvent;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketDestroyEntities;
+import net.minecraft.network.play.server.SPacketSpawnMob;
+import net.minecraft.network.play.server.SSpawnMobPacket;
 import org.bukkit.Bukkit;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
@@ -128,16 +132,24 @@ public class GSQUtil {
         }
     }
     static void hideEntity(Player player,Entity entity) throws Exception{
-        Object o = getPlayer(player);
         Class<?> packetClass = bukkitVersion.equalsIgnoreCase("1.12.2")?
                 Class.forName("net.minecraft.network.play.server.SPacketDestroyEntities"):
                 Class.forName("net.minecraft.network.play.server.SDestroyEntitiesPacket");
-        Object net = getField(o.getClass(),o,"field_71135_a");
         Constructor constructor = getConstructor(packetClass,int[].class);
         int[] id = new int[]{entity.getEntityId()};
         Object packet = constructor.newInstance(id);
-        getMethod(net.getClass(),"func_147359_a",bukkitVersion.equalsIgnoreCase("1.12.2")?
-                Class.forName("net.minecraft.network.Packet"):
-                Class.forName("net.minecraft.network.IPacket")).invoke(net,packet);
+        PixelUtil.sendPacket(player,packet);
+    }
+    static void showEntity(Player player,Entity entity) throws Exception{
+        Class<?> packetClass = bukkitVersion.equalsIgnoreCase("1.12.2")?
+                Class.forName("net.minecraft.network.play.server.SPacketSpawnMob"):
+                Class.forName("net.minecraft.network.play.server.SSpawnMobPacket");
+        Class<?> livingClass = bukkitVersion.equalsIgnoreCase("1.12.2")?
+                Class.forName("net.minecraft.entity.EntityLivingBase"):
+                Class.forName("net.minecraft.entity.LivingEntity");
+        Constructor constructor = getConstructor(packetClass,livingClass);
+        net.minecraft.entity.Entity en = getMinecraftEntity(entity);
+        Object packet = constructor.newInstance(livingClass.cast(en));
+        PixelUtil.sendPacket(player,packet);
     }
 }
