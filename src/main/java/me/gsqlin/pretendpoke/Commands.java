@@ -51,20 +51,20 @@ public class Commands implements CommandExecutor , TabCompleter {
                     String pokeName = args[1];
                     if (list.contains(pokeName)){
                         if (plugin.getConfig().getBoolean("世界配置.启用")&&
-                        plugin.getConfig().getStringList("世界配置.worlds").contains(p.getWorld().getName())){
-                            try {
-                                if (GSQUtil.startPretend(p,pokeName)){
-                                    p.sendMessage("§7开始伪装");
-                                }else{
-                                    p.sendMessage("§7你已经在伪装了");
-                                }
-                            } catch (Exception e) {
-                                p.sendMessage("§c错误!编号:003");
-                                plugin.getLogger().info("§c错误!编号:003");
-                                e.printStackTrace();
-                            }
-                        }else{
+                        !plugin.getConfig().getStringList("世界配置.worlds").contains(p.getWorld().getName())){
                             p.sendMessage("§7该世界不能进行伪装");
+                            return false;
+                        }
+                        try {
+                            if (GSQUtil.startPretend(p,pokeName)){
+                                p.sendMessage("§7开始伪装");
+                            }else{
+                                p.sendMessage("§7你已经在伪装了");
+                            }
+                        } catch (Exception e) {
+                            p.sendMessage("§c错误!编号:003");
+                            plugin.getLogger().info("§c错误!编号:003");
+                            e.printStackTrace();
                         }
                     }else{
                         p.sendMessage("§7没有这种精灵的权限");
