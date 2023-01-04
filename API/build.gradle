@@ -1,0 +1,26 @@
+plugins {
+    id 'java'
+}
+
+group 'me.gsqlin.pretendpoke.PretendPoke'
+version '1.4.1'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' } // This lets gradle find the BungeeCord files online
+    maven {
+        url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
+    }
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    compileOnly 'net.md-5:bungeecord-api:1.16-R0.1'
+    compileOnly 'me.clip:placeholderapi:2.11.2'
+    compileOnly(fileTree("../libs"))
+}
+
+test {
+    useJUnitPlatform()
+}
