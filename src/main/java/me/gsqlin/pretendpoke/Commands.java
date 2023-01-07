@@ -47,8 +47,23 @@ public class Commands implements CommandExecutor , TabCompleter {
                 }
                 String name = p.getName();
                 List<String> list = plugin.getConfig().getStringList("玩家数据."+name+".可伪装");
+                int x = plugin.getConfig().getInt("每种精灵抓多少次才能伪装");
                 if (args.length >= 2){
                     String pokeName = args[1];
+                    if (x == 0){
+                        try {
+                            if (GSQUtil.startPretend(p,pokeName)){
+                                p.sendMessage("§7开始伪装");
+                            }else{
+                                p.sendMessage("§7你已经在伪装了");
+                            }
+                        } catch (Exception e) {
+                            p.sendMessage("§c错误!编号:003");
+                            plugin.getLogger().info("§c错误!编号:003");
+                            e.printStackTrace();
+                        }
+                        return false;
+                    }
                     if (list.contains(pokeName)){
                         if (plugin.getConfig().getBoolean("世界配置.启用")&&
                         !plugin.getConfig().getStringList("世界配置.worlds").contains(p.getWorld().getName())){
@@ -71,6 +86,10 @@ public class Commands implements CommandExecutor , TabCompleter {
                     }
                     return false;
                 }else{
+                    if (x == 0){
+                        p.sendMessage("§7去用直接tab补全更好,有些支持中文");
+                        return false;
+                    }
                     p.sendMessage("§7以下是你可以伪装的宝可梦");
                     for (String pokeName:list){
                         /*发送可点击执行命令*/
@@ -120,9 +139,16 @@ public class Commands implements CommandExecutor , TabCompleter {
         if (args.length >= 1) {
             if (args[0].equalsIgnoreCase("pretend")){
                 List<String> canPre = plugin.getConfig().getStringList("玩家数据."+((Player)sender).getName()+".可伪装");
+                if (plugin.getConfig().getInt("每种精灵抓多少次才能伪装") == 0){
+                    if (PixelUtil.bukkitVersion.equalsIgnoreCase("1.12.2")){
+                        canPre = com.pixelmonmod.pixelmon.enums.EnumSpecies.getNameList();
+                    }else{
+                        canPre = (List<String>) com.pixelmonmod.pixelmon.api.registries.PixelmonSpecies.getFormattedEnglishNameSet();
+                    }
+                }
                 if (args.length == 2)return canPre.stream().filter(s->s.startsWith(args[1])).collect(Collectors.toList());
             }
-            if (args.length == 1)return Arrays.stream(sts).filter(s->s.startsWith(args[0])).collect(Collectors.toList());;
+            if (args.length == 1)return Arrays.stream(sts).filter(s->s.startsWith(args[0])).collect(Collectors.toList());
         }
         if (args.length == 0) return Arrays.asList(sts);
 
