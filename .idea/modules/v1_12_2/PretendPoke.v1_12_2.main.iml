@@ -4,7 +4,9 @@
     <facet type="minecraft" name="Minecraft">
       <configuration>
         <autoDetectTypes>
-          <platformType>BUNGEECORD</platformType>
+          <platformType>SPIGOT</platformType>
+          <platformType>FORGE</platformType>
+          <platformType>MCP</platformType>
         </autoDetectTypes>
         <projectReimportVersion>1</projectReimportVersion>
       </configuration>

@@ -1,31 +1,59 @@
 plugins {
-    id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
-group 'me.gsqlin.pretendpoke.PretendPoke'
-version '1.4.2'
+group = 'me.gsqlin.pretendpoke.pretendpoke.Main'
+version = '1.4.3-SNAPSHOT'
 
-repositories {
-    mavenCentral()
-    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' } // This lets gradle find the BungeeCord files online
-    maven {
-        url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'com.github.johnrengelman.shadow'
+
+    java {
+        sourceCompatibility = targetCompatibility = 1.8
     }
-}
 
-dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
-    compileOnly 'net.md-5:bungeecord-api:1.16-R0.1'
-    compileOnly 'me.clip:placeholderapi:2.11.2'
-    compileOnly(fileTree("libs"))
-}
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven {
+            name = 'spigotmc-repo'
+            url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+        }
+        maven {
+            url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
+        }
+        maven {
+            url = 'https://raw.github.com/FullIdle/maven-repository/main/'
+        }
+    }
 
-test {
-    useJUnitPlatform()
-}
+    dependencies {
+        compileOnly 'me.clip:placeholderapi:2.10.2'
 
-processResources {
-    setFilteringCharset("UTF-8")
-    expand project.properties
+        compileOnly 'me.fullidle.ficore:FICore:1.2.6'
+
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.1'
+        testImplementation 'org.junit.jupiter:junit-jupiter-params:5.9.1'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.1'
+        compileOnly 'org.projectlombok:lombok:1.18.28'
+        annotationProcessor 'org.projectlombok:lombok:1.18.28'
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+    processResources {
+        filteringCharset 'UTF-8'
+        filesMatching('plugin.yml') {
+            expand project.properties
+        }
+    }
+
+    shadowJar{
+        mergeServiceFiles()
+        archiveBaseName.set("$rootProject.name-$project.name")
+        archiveVersion.set("$rootProject.version")
+    }
 }

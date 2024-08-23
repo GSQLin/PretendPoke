@@ -1,2 +1,5 @@
 rootProject.name = 'PretendPoke'
+include 'v1_12_2'
+include 'common'
+include 'v1_16_5'
 

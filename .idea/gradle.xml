@@ -4,12 +4,13 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
-        <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
-        <option name="gradleHome" value="$PROJECT_DIR$/../../../../../../BuildTools/gradle-6.6" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/common" />
+            <option value="$PROJECT_DIR$/v1_12_2" />
+            <option value="$PROJECT_DIR$/v1_16_5" />
           </set>
         </option>
       </GradleProjectSettings>
