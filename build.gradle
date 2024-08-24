@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'me.gsqlin.pretendpoke.pretendpoke.Main'
-version = '1.4.3-SNAPSHOT'
+version = '1.4.4-SNAPSHOT'
 
 allprojects {
     apply plugin: 'java'

@@ -9,6 +9,7 @@
         </processorPath>
         <module name="PretendPoke.v1_12_2.main" />
         <module name="PretendPoke.main" />
+        <module name="PretendPoke.v1_20_2.main" />
         <module name="PretendPoke.common.main" />
         <module name="PretendPoke.v1_16_5.main" />
       </profile>

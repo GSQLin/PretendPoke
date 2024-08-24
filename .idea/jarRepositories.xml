@@ -41,5 +41,10 @@
       <option name="name" value="maven2" />
       <option name="url" value="https://raw.github.com/FullIdle/maven-repository/main/" />
     </remote-repository>
+    <remote-repository>
+      <option name="id" value="maven4" />
+      <option name="name" value="maven4" />
+      <option name="url" value="https://maven.mohistmc.com/" />
+    </remote-repository>
   </component>
 </project>
