@@ -5,6 +5,7 @@ import com.pixelmonmod.pixelmon.api.events.CaptureEvent;
 import com.pixelmonmod.pixelmon.api.events.PokeballImpactEvent;
 import com.pixelmonmod.pixelmon.battles.controller.participants.BattleParticipant;
 import com.pixelmonmod.pixelmon.battles.controller.participants.PixelmonWrapper;
+import com.pixelmonmod.pixelmon.battles.controller.participants.WildPixelmonParticipant;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import me.fullidle.ficore.ficore.common.api.event.ForgeEvent;
 import me.gsqlin.pretendpoke.pretendpoke.api.CommonData;
@@ -24,8 +25,9 @@ public class PlayerListener implements Listener {
         if (event.getForgeEvent() instanceof BattleStartedEvent) {
             BattleStartedEvent e = (BattleStartedEvent) event.getForgeEvent();
             for (BattleParticipant participant : e.bc.participants) {
-                for (PixelmonWrapper wrapper : participant.allPokemon) {
-                    if (entityMap.containsValue(CommonData.versionHelper.getBukkitEntity(wrapper.entity))) {
+                if (participant instanceof WildPixelmonParticipant) {
+                    if (entityMap.containsValue(CommonData.versionHelper
+                            .getBukkitEntity(((WildPixelmonParticipant) participant).getEntity()))) {
                         e.bc.endBattle();
                         return;
                     }
