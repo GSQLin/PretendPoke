@@ -34,7 +34,13 @@ public abstract class PretendPokePlugin<SPECIES, POKEMON, POKE_ENTITY> extends J
 
         PluginManager pluginManager = Bukkit.getServer().getPluginManager();
         pluginManager.registerEvents(bukkitListener, this);
-        pluginManager.registerEvents(this.getForgeListener(), this);
+        ForgeListener<POKEMON, POKE_ENTITY, ?> forgeListener = this.getForgeListener();
+        if (forgeListener != null) {
+            pluginManager.registerEvents(forgeListener, this);
+            this.getLogger().info("§aForgeListener registered!");
+        }else{
+            this.getLogger().warning("ForgeListener is null");
+        }
 
         PluginCommand command = this.getCommand("pretendpoke");
         command.setExecutor(commandBase);
@@ -50,6 +56,5 @@ public abstract class PretendPokePlugin<SPECIES, POKEMON, POKE_ENTITY> extends J
     @NonNull
     public abstract PokeController<SPECIES, POKEMON, POKE_ENTITY> getPokeController();
 
-    @NonNull
     public abstract ForgeListener<POKEMON, POKE_ENTITY, ?> getForgeListener();
 }

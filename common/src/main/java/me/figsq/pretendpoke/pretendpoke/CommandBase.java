@@ -14,7 +14,9 @@ import java.util.List;
 public final class CommandBase<SPECIES, POKEMON> implements TabExecutor {
     public static final String[] helpMsg = {
             "HELP",
-            ""
+            "reload",
+            "pretendpoke <Pokémon>",
+            "cancelpretend"
     };
     public static final ArrayList<String> subCmd = Lists.newArrayList(
             "help", "reload", "pretendpoke", "cancelpretend"
@@ -38,12 +40,12 @@ public final class CommandBase<SPECIES, POKEMON> implements TabExecutor {
                     }
                     case "pretendpoke":
                     case "cancelpretend": {
+                        boolean isPretend = lowerCase.equals("pretendpoke");
                         if (!(sender instanceof Player)) {
                             sender.sendMessage("§cYou are not a player!");
                             return false;
                         }
-
-                        if (args.length < 2) {
+                        if (isPretend && args.length < 2) {
                             sender.sendMessage("§cPlease enter the Pokémon you want to disguise!");
                             return false;
                         }
@@ -55,7 +57,6 @@ public final class CommandBase<SPECIES, POKEMON> implements TabExecutor {
                         Player player = (Player) sender;
                         PlayerController<POKEMON, ?> playerController = instance.getPlayerController();
 
-                        boolean isPretend = lowerCase.equals("pretendpoke");
                         if (isPretend) {
                             playerController.setPretendPoke(player, pokemon);
                             sender.sendMessage("§aYou are now disguised as §b" + name);
