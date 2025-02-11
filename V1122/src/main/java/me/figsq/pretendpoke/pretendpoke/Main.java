@@ -7,6 +7,12 @@ import me.figsq.pretendpoke.pretendpoke.api.pokemon.PokeController;
 import me.figsq.pretendpoke.pretendpoke.listener.ForgeListener;
 
 public class Main extends PretendPokePlugin<Pokemon, EntityPixelmon>{
+    public Main(){
+        super();
+        this.getLogger().info("§a插件套壳版本: 1.12.2");
+        this.getLogger().info("§a模组版本: Pixelmon-1.12.2-8.4.3");
+    }
+
     @Override
     public @NonNull PokeController<Pokemon, EntityPixelmon> getPokeController() {
         return V12PokeController.INSTANCE;
