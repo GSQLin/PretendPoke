@@ -7,22 +7,4 @@ depend:
   - FICore
 commands:
   pretendpoke:
-    description: mainCommand
-    aliases: [ptendp]
-permissions:
-  pretendpoke.reload:
-    default: op
-    description: 重载权限
-  pretendpoke.help:
-    default: op
-    description: 查看命令
-  pretendpoke.pretend:
-    default: op
-    description: 伪装/卸下伪装权限
-  pretendpoke.*:
-    description: 全部权限
-    default: op
-    children:
-      pretendpoke.reload: true
-      pretendpoke.help: true
-      pretendpoke.pretend: true
+    description: main cmd

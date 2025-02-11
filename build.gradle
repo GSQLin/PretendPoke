@@ -1,17 +1,12 @@
 plugins {
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'java'
 }
 
-group = 'me.gsqlin.pretendpoke.pretendpoke.Main'
-version = '1.4.5-official'
+group = 'me.figsq.pretendpoke.pretendpoke.Main'
+version = '1.4.6-BETA'
 
-allprojects {
+subprojects {
     apply plugin: 'java'
-    apply plugin: 'com.github.johnrengelman.shadow'
-
-    java {
-        sourceCompatibility = targetCompatibility = 1.8
-    }
 
     repositories {
         mavenLocal()
@@ -21,15 +16,16 @@ allprojects {
             url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
         }
         maven {
-            url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
+            allowInsecureProtocol = true
+            url "http://server.pokemtd.top:31647/snapshots"
         }
         maven {
-            url = 'https://raw.github.com/FullIdle/maven-repository/main/'
+            url = 'https://repo.minebench.de/'
         }
     }
 
     dependencies {
-        compileOnly 'me.clip:placeholderapi:2.10.2'
+        compileOnly 'me.clip:placeholderapi:2.10.3'
 
         compileOnly 'me.fullidle.ficore:FICore:1.2.6'
 
@@ -38,6 +34,21 @@ allprojects {
         testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.1'
         compileOnly 'org.projectlombok:lombok:1.18.28'
         annotationProcessor 'org.projectlombok:lombok:1.18.28'
+    }
+    if (name != 'common') {
+        var commonProject = project(':common') as Project
+
+        dependencies {
+            implementation commonProject
+        }
+
+        jar {
+            from(commonProject.sourceSets.main.output)
+        }
+    }
+
+    java {
+        sourceCompatibility = targetCompatibility = 1.8
     }
 
     test {
@@ -51,9 +62,8 @@ allprojects {
         }
     }
 
-    shadowJar{
-        mergeServiceFiles()
-        archiveBaseName.set("$rootProject.name-$project.name")
-        archiveVersion.set("$rootProject.version")
+    jar {
+        archiveBaseName = "${rootProject.name}-${project.name}"
+        version = rootProject.version
     }
 }

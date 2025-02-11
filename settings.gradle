@@ -1,6 +1,4 @@
 rootProject.name = 'PretendPoke'
-include 'v1_12_2'
 include 'common'
-include 'v1_16_5'
-include 'v1_20_2'
+include 'V1122'
 
