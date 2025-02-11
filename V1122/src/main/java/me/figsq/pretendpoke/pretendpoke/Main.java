@@ -2,11 +2,12 @@ package me.figsq.pretendpoke.pretendpoke;
 
 import com.pixelmonmod.pixelmon.api.pokemon.Pokemon;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
+import com.pixelmonmod.pixelmon.enums.EnumSpecies;
 import lombok.NonNull;
 import me.figsq.pretendpoke.pretendpoke.api.pokemon.PokeController;
 import me.figsq.pretendpoke.pretendpoke.listener.ForgeListener;
 
-public class Main extends PretendPokePlugin<Pokemon, EntityPixelmon>{
+public class Main extends PretendPokePlugin<EnumSpecies,Pokemon, EntityPixelmon>{
     public Main(){
         super();
         this.getLogger().info("§a插件套壳版本: 1.12.2");
@@ -14,7 +15,7 @@ public class Main extends PretendPokePlugin<Pokemon, EntityPixelmon>{
     }
 
     @Override
-    public @NonNull PokeController<Pokemon, EntityPixelmon> getPokeController() {
+    public @NonNull PokeController<EnumSpecies,Pokemon, EntityPixelmon> getPokeController() {
         return V12PokeController.INSTANCE;
     }
 

@@ -9,9 +9,9 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class BukkitListener<POKEMON, POKE_ENTITY> implements Listener {
-    public PretendPokePlugin<POKEMON, POKE_ENTITY> plugin;
+    public PretendPokePlugin<?,POKEMON, POKE_ENTITY> plugin;
 
-    public BukkitListener(PretendPokePlugin<POKEMON, POKE_ENTITY> plugin) {
+    public BukkitListener(PretendPokePlugin<?,POKEMON, POKE_ENTITY> plugin) {
         this.plugin = plugin;
     }
 
@@ -19,7 +19,7 @@ public class BukkitListener<POKEMON, POKE_ENTITY> implements Listener {
     public void playerMove(PlayerMoveEvent event) {
         POKEMON poke = this.plugin.getPlayerController().getPretendPoke(event.getPlayer());
         if (poke != null) {
-            PokeController<POKEMON, POKE_ENTITY> pokeController = this.plugin.getPokeController();
+            PokeController<?,POKEMON, POKE_ENTITY> pokeController = this.plugin.getPokeController();
             // TODO: 是伪装玩家
             Player player = event.getPlayer();
             POKE_ENTITY pokeEntity = pokeController.getOrSpawnPokeEntity(poke, player);

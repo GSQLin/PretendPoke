@@ -10,15 +10,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PlayerController<POKEMON,POKE_ENTITY> {
-    public PretendPokePlugin<POKEMON,POKE_ENTITY> plugin;
+    public PretendPokePlugin<?,POKEMON,POKE_ENTITY> plugin;
     private final Map<Player, POKEMON> map = new HashMap<>();
 
 
-    public PlayerController(PretendPokePlugin<POKEMON,POKE_ENTITY> plugin) {
+    public PlayerController(PretendPokePlugin<?,POKEMON,POKE_ENTITY> plugin) {
         this.plugin = plugin;
     }
 
     public POKEMON setPretendPoke(Player player, POKEMON pokemon) {
+        if (pokemon == null) {
+            return this.cancelPretendPoke(player);
+        }
         this.hidePlayer(player);
         return this.map.put(player, pokemon);
     }
@@ -30,7 +33,7 @@ public class PlayerController<POKEMON,POKE_ENTITY> {
     public POKEMON cancelPretendPoke(Player player) {
         this.showPlayer(player);
         POKEMON remove = this.map.remove(player);
-        PokeController<POKEMON, POKE_ENTITY> pokeController = this.plugin.getPokeController();
+        PokeController<?,POKEMON, POKE_ENTITY> pokeController = this.plugin.getPokeController();
         POKE_ENTITY pokeEntity = pokeController.getPokeEntity(remove);
         if (pokeEntity != null) {
             Entity entity = pokeController.asBukkitEntity(pokeEntity);

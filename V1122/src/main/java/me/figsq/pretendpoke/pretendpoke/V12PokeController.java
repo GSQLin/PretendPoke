@@ -1,7 +1,9 @@
 package me.figsq.pretendpoke.pretendpoke;
 
+import com.pixelmonmod.pixelmon.Pixelmon;
 import com.pixelmonmod.pixelmon.api.pokemon.Pokemon;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
+import com.pixelmonmod.pixelmon.enums.EnumSpecies;
 import lombok.NonNull;
 import me.figsq.pretendpoke.pretendpoke.api.pokemon.PokeController;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -13,7 +15,7 @@ import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-public final class V12PokeController extends PokeController<Pokemon, EntityPixelmon> {
+public final class V12PokeController extends PokeController<EnumSpecies,Pokemon, EntityPixelmon> {
     public static final V12PokeController INSTANCE = new V12PokeController();
 
     @Override
@@ -52,6 +54,16 @@ public final class V12PokeController extends PokeController<Pokemon, EntityPixel
     @Override
     public boolean isPokeEntity(Entity entity) {
         return minecraftEntity(entity) instanceof EntityPixelmon;
+    }
+
+    @Override
+    public EnumSpecies getSpecies(String speciesName) {
+        return EnumSpecies.getFromNameAnyCase(speciesName);
+    }
+
+    @Override
+    public Pokemon createPokemon(EnumSpecies species) {
+        return Pixelmon.pokemonFactory.create(species);
     }
 
     public net.minecraft.entity.Entity minecraftEntity(Entity entity) {

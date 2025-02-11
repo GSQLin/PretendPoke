@@ -13,9 +13,9 @@ public abstract class ForgeListener<
         POKEMON,POKE_ENTITY,
         POKEBALL_IMPACT_EVENT
         > implements Listener {
-    public PretendPokePlugin<POKEMON,POKE_ENTITY> plugin;
+    public PretendPokePlugin<?,POKEMON,POKE_ENTITY> plugin;
 
-    public ForgeListener(PretendPokePlugin<POKEMON,POKE_ENTITY> plugin){
+    public ForgeListener(PretendPokePlugin<?,POKEMON,POKE_ENTITY> plugin){
         this.plugin = plugin;
     }
 
@@ -27,7 +27,7 @@ public abstract class ForgeListener<
             Entity entity = getBallHitEntity(e);
             //TODO: 丢球撞到了伪装玩家的伪装实体宝可梦 进行取消伪装
             if (entity != null) {
-                PokeController<POKEMON, POKE_ENTITY> pokeController = plugin.getPokeController();
+                PokeController<?,POKEMON, POKE_ENTITY> pokeController = plugin.getPokeController();
                 if (pokeController.isPokeEntity(entity)) {
                     PlayerController<POKEMON,POKE_ENTITY> playerController = plugin.getPlayerController();
                     POKEMON pokemon = pokeController.getPokemon(pokeController.asPokeEntity(entity));

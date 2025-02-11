@@ -16,7 +16,7 @@ public final class V12ForgeListener extends ForgeListener<
 
     public static final ForgeListener<Pokemon, EntityPixelmon,?> INSTANCE = new V12ForgeListener(PretendPokePlugin.getInstance());
 
-    public V12ForgeListener(PretendPokePlugin<Pokemon, EntityPixelmon> plugin) {
+    public V12ForgeListener(PretendPokePlugin<?,Pokemon, EntityPixelmon> plugin) {
         super(plugin);
     }
 

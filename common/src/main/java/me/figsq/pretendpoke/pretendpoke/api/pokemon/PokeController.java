@@ -4,7 +4,7 @@ import lombok.NonNull;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
-public abstract class PokeController<POKEMON, POKE_ENTITY> {
+public abstract class PokeController<SPECIES,POKEMON, POKE_ENTITY> {
     public abstract POKE_ENTITY getPokeEntity(POKEMON pokemon);
     @NonNull
     public abstract POKE_ENTITY getOrSpawnPokeEntity(POKEMON pokemon, Entity parent);
@@ -16,4 +16,6 @@ public abstract class PokeController<POKEMON, POKE_ENTITY> {
     }
     public abstract void hideEntityForPlayer(Entity entity, Player target);
     public abstract boolean isPokeEntity(Entity entity);
+    public abstract SPECIES getSpecies(String speciesName);
+    public abstract POKEMON createPokemon(SPECIES species);
 }
