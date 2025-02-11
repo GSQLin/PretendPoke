@@ -8,9 +8,14 @@ import java.util.List;
 
 public final class CommandBase implements TabExecutor {
     public static final CommandBase INSTANCE = new CommandBase();
+    public static final String[] helpMsg = {
+            "HELP",
+            ""
+    };
 
     @Override
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
+    public boolean onCommand(CommandSender sender, Command command, String s, String[] strings) {
+        sender.sendMessage(helpMsg);
         return false;
     }
 
