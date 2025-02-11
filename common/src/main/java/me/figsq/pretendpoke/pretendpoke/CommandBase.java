@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class CommandBase<SPECIES, POKEMON> implements TabExecutor {
+public class CommandBase<SPECIES, POKEMON> implements TabExecutor {
     public static final String[] helpMsg = {
             "HELP",
             "reload",
