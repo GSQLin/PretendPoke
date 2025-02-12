@@ -8,22 +8,21 @@ import com.pixelmonmod.pixelmon.battles.controller.participants.BattleParticipan
 import com.pixelmonmod.pixelmon.entities.pixelmon.PixelmonEntity;
 import me.figsq.pretendpoke.pretendpoke.listener.ForgeListener;
 import net.minecraftforge.eventbus.api.Event;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static me.figsq.pretendpoke.pretendpoke.V16PokeController.bukkitEntity;
+import static me.figsq.pretendpoke.pretendpoke.V20PokeController.bukkitEntity;
 
-public class V16ForgeListener extends ForgeListener<
+public final class V20ForgeListener extends ForgeListener<
         Pokemon, PixelmonEntity,
         PokeBallImpactEvent, BattleStartedEvent,
         Event
         > {
-    public static final V16ForgeListener INSTANCE = new V16ForgeListener(PretendPokePlugin.getInstance());
+    public static final V20ForgeListener INSTANCE = new V20ForgeListener(PretendPokePlugin.getInstance());
 
-    public V16ForgeListener(PretendPokePlugin<?, Pokemon, PixelmonEntity> plugin) {
+    public V20ForgeListener(PretendPokePlugin<?, Pokemon, PixelmonEntity> plugin) {
         super(plugin);
     }
 
@@ -45,9 +44,7 @@ public class V16ForgeListener extends ForgeListener<
     @Override
     public void cancelForgeEvent(Event event) {
         if (event instanceof BattleStartedEvent) {
-            BattleStartedEvent e = (BattleStartedEvent) event;
-            e.getBattleController().endBattle(BattleEndCause.FORCE);
-            return;
+            ((BattleStartedEvent) event).getBattleController().endBattle(BattleEndCause.BATTLE_ERROR);
         }
         event.setCanceled(true);
     }
@@ -63,6 +60,6 @@ public class V16ForgeListener extends ForgeListener<
 
     @Override
     public Entity getThrower(PokeBallImpactEvent e) {
-        return Bukkit.getPlayer(e.getPokeBall().getOwnerId());
+        return bukkitEntity(e.getPokeBall().getThrower());
     }
 }

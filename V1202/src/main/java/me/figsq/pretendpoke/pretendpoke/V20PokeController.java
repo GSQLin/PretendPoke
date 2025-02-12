@@ -1,7 +1,5 @@
 package me.figsq.pretendpoke.pretendpoke;
 
-import com.pixelmonmod.pixelmon.Pixelmon;
-import com.pixelmonmod.pixelmon.api.pokemon.PixelmonPokemonProxy;
 import com.pixelmonmod.pixelmon.api.pokemon.Pokemon;
 import com.pixelmonmod.pixelmon.api.pokemon.PokemonFactory;
 import com.pixelmonmod.pixelmon.api.pokemon.species.Species;
@@ -9,12 +7,10 @@ import com.pixelmonmod.pixelmon.api.registries.PixelmonSpecies;
 import com.pixelmonmod.pixelmon.entities.pixelmon.PixelmonEntity;
 import lombok.NonNull;
 import me.figsq.pretendpoke.pretendpoke.api.PokeController;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.play.server.SDestroyEntitiesPacket;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.craftbukkit.v1_16_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_16_R3.entity.CraftEntity;
+import org.bukkit.craftbukkit.v1_20_R2.CraftServer;
+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -22,8 +18,8 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.UUID;
 
-public final class V16PokeController extends PokeController<Species, Pokemon, PixelmonEntity> {
-    public static final V16PokeController INSTANCE = new V16PokeController();
+public class V20PokeController extends PokeController<Species, Pokemon, PixelmonEntity> {
+    public static final V20PokeController INSTANCE = new V20PokeController();
 
     @Override
     public PixelmonEntity getPokeEntity(Pokemon pokemon) {
@@ -47,13 +43,12 @@ public final class V16PokeController extends PokeController<Species, Pokemon, Pi
 
     @Override
     public PixelmonEntity asPokeEntity(Entity entity) {
-        return ((PixelmonEntity) minecraftEntity(entity));
+        return (PixelmonEntity) minecraftEntity(entity);
     }
 
     @Override
     public void hideEntityForPlayer(Entity entity, Player target) {
-        SDestroyEntitiesPacket packet = new SDestroyEntitiesPacket(entity.getEntityId());
-        ((ServerPlayerEntity) minecraftEntity(target)).field_71135_a.func_147359_a(packet);
+        target.hideEntity(PretendPokePlugin.getInstance(), entity);
     }
 
     @Override
@@ -63,7 +58,7 @@ public final class V16PokeController extends PokeController<Species, Pokemon, Pi
 
     @Override
     public Species getSpecies(String speciesName) {
-        return PixelmonSpecies.fromName(speciesName).orElse((Species) null);
+        return PixelmonSpecies.fromName(speciesName).orElse(null);
     }
 
     @Override
@@ -96,15 +91,11 @@ public final class V16PokeController extends PokeController<Species, Pokemon, Pi
         return Bukkit.getOfflinePlayer(pokemon.getOwnerPlayerUUID());
     }
 
-    public static net.minecraft.entity.Entity minecraftEntity(Entity entity){
-        if (entity == null) {
-            return null;
-        }
-        return (net.minecraft.entity.Entity) (Object) ((CraftEntity) entity).getHandle();
+    public static Entity bukkitEntity(net.minecraft.world.entity.Entity entity){
+        return CraftEntity.getEntity(((CraftServer) Bukkit.getServer()),entity);
     }
 
-    public static Entity bukkitEntity(net.minecraft.entity.Entity entity){
-        if (entity == null) return null;
-        return CraftEntity.getEntity(((CraftServer) Bukkit.getServer()), (((net.minecraft.server.v1_16_R3.Entity) (Object) entity)));
+    public static net.minecraft.world.entity.Entity minecraftEntity(Entity entity){
+        return ((CraftEntity)entity).getHandle();
     }
 }
