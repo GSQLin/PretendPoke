@@ -1,15 +1,17 @@
 package me.figsq.pretendpoke.pretendpoke;
 
 import com.google.common.collect.Lists;
-import me.figsq.pretendpoke.pretendpoke.api.player.PlayerController;
-import me.figsq.pretendpoke.pretendpoke.api.pokemon.PokeController;
+import me.figsq.pretendpoke.pretendpoke.api.PlayerController;
+import me.figsq.pretendpoke.pretendpoke.api.PokeController;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CommandBase<SPECIES, POKEMON> implements TabExecutor {
     public static final String[] helpMsg = {
@@ -21,6 +23,11 @@ public class CommandBase<SPECIES, POKEMON> implements TabExecutor {
     public static final ArrayList<String> subCmd = Lists.newArrayList(
             "help", "reload", "pretendpoke", "cancelpretend"
     );
+    public final PretendPokePlugin<SPECIES,POKEMON,?> plugin;
+
+    public CommandBase(){
+        this.plugin = PretendPokePlugin.getInstance();
+    }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -50,18 +57,33 @@ public class CommandBase<SPECIES, POKEMON> implements TabExecutor {
                             return false;
                         }
 
-                        String name = args[1];
                         PretendPokePlugin<SPECIES, POKEMON, ?> instance = PretendPokePlugin.getInstance();
                         PokeController<SPECIES, POKEMON, ?> pokeController = instance.getPokeController();
-                        POKEMON pokemon = pokeController.createPokemon(pokeController.getSpecies(name));
                         Player player = (Player) sender;
                         PlayerController<POKEMON, ?> playerController = instance.getPlayerController();
 
+                        POKEMON old = playerController.getPretendPoke(player);
                         if (isPretend) {
-                            playerController.setPretendPoke(player, pokemon);
+                            if (old != null) {
+                                sender.sendMessage("§cYou are already disguised!");
+                                return false;
+                            }
+
+                            String name = args[1];
+                            SPECIES species = pokeController.getSpecies(name);
+                            if (species == null) {
+                                sender.sendMessage("§cPokémon not found!");
+                                return false;
+                            }
+                            POKEMON pokemon = pokeController.createPokemon(species);
+                            playerController.setPretendPoke(player, pokemon,true);
                             sender.sendMessage("§aYou are now disguised as §b" + name);
                         } else {
-                            playerController.cancelPretendPoke(player);
+                            if (old == null) {
+                                sender.sendMessage("§cYou are not disguised!");
+                                return false;
+                            }
+                            playerController.cancelPretendPoke(player,true);
                             sender.sendMessage("§aYou are no longer disguised!");
                         }
                         return false;
@@ -74,7 +96,18 @@ public class CommandBase<SPECIES, POKEMON> implements TabExecutor {
     }
 
     @Override
-    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
-        return null;
+    public List<String> onTabComplete(CommandSender commandSender, Command command, String label, String[] args) {
+        if (args.length < 1) return subCmd;
+        if (args.length == 1) {
+            return subCmd.stream().filter(s -> s.startsWith(args[0].toLowerCase())).collect(Collectors.toList());
+        }
+        if (args[0].equalsIgnoreCase("pretendpoke")) {
+            PokeController<SPECIES, POKEMON, ?> pokeController = this.plugin.getPokeController();
+            List<String> collect = pokeController.getAllSpecies().stream().map(pokeController::getSpeciesName).collect(Collectors.toList());
+            String arg = args[1].toLowerCase();
+            if (arg.isEmpty()) return collect;
+            return collect.stream().filter(s -> s.toLowerCase().startsWith(arg)).collect(Collectors.toList());
+        }
+        return Collections.emptyList();
     }
 }

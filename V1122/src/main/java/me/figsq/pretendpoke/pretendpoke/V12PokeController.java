@@ -1,21 +1,27 @@
 package me.figsq.pretendpoke.pretendpoke;
 
+import com.google.common.collect.Lists;
 import com.pixelmonmod.pixelmon.Pixelmon;
 import com.pixelmonmod.pixelmon.api.pokemon.Pokemon;
 import com.pixelmonmod.pixelmon.entities.pixelmon.EntityPixelmon;
 import com.pixelmonmod.pixelmon.enums.EnumSpecies;
 import lombok.NonNull;
-import me.figsq.pretendpoke.pretendpoke.api.pokemon.PokeController;
+import me.figsq.pretendpoke.pretendpoke.api.PokeController;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.server.SPacketDestroyEntities;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.craftbukkit.v1_12_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_12_R1.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 
-public final class V12PokeController extends PokeController<EnumSpecies,Pokemon, EntityPixelmon> {
+import java.util.List;
+import java.util.UUID;
+
+public final class V12PokeController extends PokeController<EnumSpecies, Pokemon, EntityPixelmon> {
     public static final V12PokeController INSTANCE = new V12PokeController();
 
     @Override
@@ -35,7 +41,7 @@ public final class V12PokeController extends PokeController<EnumSpecies,Pokemon,
 
     @Override
     public Entity asBukkitEntity(EntityPixelmon entityPixelmon) {
-        return CraftEntity.getEntity(((CraftServer) Bukkit.getServer()), (((net.minecraft.server.v1_12_R1.Entity) (Object) entityPixelmon)));
+        return bukkitEntity(entityPixelmon);
     }
 
     @Override
@@ -66,7 +72,37 @@ public final class V12PokeController extends PokeController<EnumSpecies,Pokemon,
         return Pixelmon.pokemonFactory.create(species);
     }
 
-    public net.minecraft.entity.Entity minecraftEntity(Entity entity) {
+    @Override
+    public void removeAI(EntityPixelmon entityPixelmon) {
+        LivingEntity en = (LivingEntity) asBukkitEntity(entityPixelmon);
+        en.setAI(false);
+    }
+
+    @Override
+    public UUID getUUID(Pokemon pokemon) {
+        return pokemon.getUUID();
+    }
+
+    @Override
+    public List<EnumSpecies> getAllSpecies() {
+        return Lists.newArrayList(EnumSpecies.values());
+    }
+
+    @Override
+    public String getSpeciesName(EnumSpecies species) {
+        return species.getPokemonName();
+    }
+
+    @Override
+    public OfflinePlayer getOwner(Pokemon pokemon) {
+        return Bukkit.getOfflinePlayer(pokemon.getOwnerPlayerUUID());
+    }
+
+    public static net.minecraft.entity.Entity minecraftEntity(Entity entity) {
         return ((net.minecraft.entity.Entity) (Object) ((CraftEntity) entity).getHandle());
+    }
+
+    public static Entity bukkitEntity(net.minecraft.entity.Entity entity) {
+        return CraftEntity.getEntity(((CraftServer) Bukkit.getServer()), ((net.minecraft.server.v1_12_R1.Entity) (Object) entity));
     }
 }
