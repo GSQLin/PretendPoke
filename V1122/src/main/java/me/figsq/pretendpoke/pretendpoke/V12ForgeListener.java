@@ -53,9 +53,6 @@ public final class V12ForgeListener extends ForgeListener<
         if (event instanceof BattleStartedEvent) {
             BattleStartedEvent e = (BattleStartedEvent) event;
             BattleControllerBase bc = e.bc;
-            for (Entity entity : getParticipants(e)) {
-                entity.sendMessage("§cBattle has been cancelled due to a pretend pokemon!");
-            }
             bc.endBattle(EnumBattleEndCause.FORCE);
             return;
         }

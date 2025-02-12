@@ -99,10 +99,16 @@ public final class V12PokeController extends PokeController<EnumSpecies, Pokemon
     }
 
     public static net.minecraft.entity.Entity minecraftEntity(Entity entity) {
+        if (entity == null) {
+            return null;
+        }
         return ((net.minecraft.entity.Entity) (Object) ((CraftEntity) entity).getHandle());
     }
 
     public static Entity bukkitEntity(net.minecraft.entity.Entity entity) {
+        if (entity == null) {
+            return null;
+        }
         return CraftEntity.getEntity(((CraftServer) Bukkit.getServer()), ((net.minecraft.server.v1_12_R1.Entity) (Object) entity));
     }
 }
