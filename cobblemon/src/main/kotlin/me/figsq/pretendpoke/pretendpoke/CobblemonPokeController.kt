@@ -49,7 +49,11 @@ object CobblemonPokeController: PokeController<Species, Pokemon, PokemonEntity>(
     }
 
     override fun getSpecies(speciesName: String): Species? {
-        return PokemonSpecies.getByName(speciesName)
+        return try {
+            PokemonSpecies.getByName(speciesName.lowercase())
+        } catch (e: Exception) {
+            null
+        }
     }
 
     override fun getAllSpecies(): MutableList<Species> {
