@@ -88,7 +88,11 @@ public class V20PokeController extends PokeController<Species, Pokemon, Pixelmon
 
     @Override
     public OfflinePlayer getOwner(Pokemon pokemon) {
-        return Bukkit.getOfflinePlayer(pokemon.getOwnerPlayerUUID());
+        UUID ownerPlayerUUID = pokemon.getOwnerPlayerUUID();
+        if (ownerPlayerUUID == null) {
+            return null;
+        }
+        return Bukkit.getOfflinePlayer(ownerPlayerUUID);
     }
 
     public static Entity bukkitEntity(net.minecraft.world.entity.Entity entity){

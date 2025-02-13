@@ -95,6 +95,9 @@ public final class V12PokeController extends PokeController<EnumSpecies, Pokemon
 
     @Override
     public OfflinePlayer getOwner(Pokemon pokemon) {
+        if (pokemon.getOwnerPlayerUUID() == null) {
+            return null;
+        }
         return Bukkit.getOfflinePlayer(pokemon.getOwnerPlayerUUID());
     }
 

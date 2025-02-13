@@ -9,6 +9,7 @@
         </processorPath>
         <module name="PretendPoke.V1122.main" />
         <module name="PretendPoke.V1165.main" />
+        <module name="PretendPoke.V1202.main" />
         <module name="PretendPoke.common.main" />
       </profile>
     </annotationProcessing>

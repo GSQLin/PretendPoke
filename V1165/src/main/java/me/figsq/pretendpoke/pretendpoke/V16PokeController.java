@@ -93,7 +93,11 @@ public final class V16PokeController extends PokeController<Species, Pokemon, Pi
 
     @Override
     public OfflinePlayer getOwner(Pokemon pokemon) {
-        return Bukkit.getOfflinePlayer(pokemon.getOwnerPlayerUUID());
+        UUID ownerPlayerUUID = pokemon.getOwnerPlayerUUID();
+        if (ownerPlayerUUID == null) {
+            return null;
+        }
+        return Bukkit.getOfflinePlayer(ownerPlayerUUID);
     }
 
     public static net.minecraft.entity.Entity minecraftEntity(Entity entity){
