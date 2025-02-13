@@ -15,6 +15,13 @@ public class Main extends PretendPokePlugin<Species, Pokemon, PixelmonEntity>{
 
     @Override
     public ForgeListener<Pokemon, PixelmonEntity, ?, ?, ?> getForgeListener() {
-        return null;
+        return V20ForgeListener.INSTANCE;
+    }
+
+    @Override
+    public void onEnable() {
+        super.onEnable();
+        this.getLogger().info("§aShell version: 1.20.2");
+        this.getLogger().info("§aMod version: Pixelmon-1.20.2-9.2.7[Development and usage version]");
     }
 }

@@ -22,3 +22,7 @@ dependencies {
     compileOnly fileTree('libs')
 */
 }
+
+java {
+    sourceCompatibility = targetCompatibility = 1.8
+}

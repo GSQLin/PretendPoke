@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'me.figsq.pretendpoke.pretendpoke.Main'
-version = '1.4.7-BETA'
+version = '1.4.8-BETA'
 
 subprojects {
     apply plugin: 'java'
@@ -29,12 +29,11 @@ subprojects {
 
         compileOnly 'me.fullidle.ficore:FICore:1.2.6'
 
-        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.1'
-        testImplementation 'org.junit.jupiter:junit-jupiter-params:5.9.1'
-        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.1'
-        compileOnly 'org.projectlombok:lombok:1.18.28'
-        annotationProcessor 'org.projectlombok:lombok:1.18.28'
+        compileOnly 'org.projectlombok:lombok:1.18.30'
+        annotationProcessor 'org.projectlombok:lombok:1.18.30'
     }
+    println project.name
+
     if (name != 'common') {
         var commonProject = project(':common') as Project
 
@@ -42,17 +41,12 @@ subprojects {
             implementation commonProject
         }
 
-        jar {
-            from(commonProject.sourceSets.main.output)
+        sourceSets {
+            main {
+                java.srcDirs += commonProject.sourceSets.main.java.srcDirs
+                resources.srcDirs += commonProject.sourceSets.main.resources.srcDirs
+            }
         }
-    }
-
-    java {
-        sourceCompatibility = targetCompatibility = 1.8
-    }
-
-    test {
-        useJUnitPlatform()
     }
 
     processResources {

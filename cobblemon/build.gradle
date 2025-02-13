@@ -1,0 +1,60 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '2.0.20'
+    id 'architectury-plugin' version '3.4-SNAPSHOT'
+    id 'dev.architectury.loom' version '1.7-SNAPSHOT'
+}
+
+architectury {
+    minecraft = '1.21.1'
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven {
+        allowInsecureProtocol = true
+        url "http://server.pokemtd.top:31647/snapshots"
+    }
+    maven {
+        url = 'https://repo.extendedclip.com/releases/'
+    }
+    maven {
+        name = 'spigotmc-repo'
+        url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+    }
+}
+
+dependencies {
+    minecraft "net.minecraft:minecraft:1.21.1"
+    mappings loom.officialMojangMappings()
+
+    modCompileOnly 'com.cobblemon:Cobblemon:1.6.1+1.21.1'
+
+    compileOnly 'org.spigotmc:spigot-api:1.21.1-R0.1-SNAPSHOT'
+/*
+    compileOnly 'org.spigotmc:spigot:1.21.1-R0.1-SNAPSHOT'
+*/
+    compileOnly "net.md-5:bungeecord-chat:1.20-R0.1"
+}
+
+kotlin {
+    jvmToolchain(17)
+}
+
+java {
+    sourceCompatibility = targetCompatibility = JavaVersion.VERSION_17
+}
+
+
+//特殊处理
+remapJar {
+    archiveBaseName = "${rootProject.name}-${project.name}"
+    version = rootProject.version
+}
+sourceSets {
+    main {
+        def common = project(':common')
+        java.srcDirs += common.sourceSets.main.java.srcDirs
+        resources.srcDirs += common.sourceSets.main.resources.srcDirs
+    }
+}

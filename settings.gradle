@@ -1,6 +1,17 @@
+pluginManagement {
+    repositories {
+        maven { url "https://maven.fabricmc.net/" }
+        maven { url "https://maven.architectury.dev/" }
+        maven { url "https://files.minecraftforge.net/maven/" }
+        gradlePluginPortal()
+    }
+}
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.8.0'
+}
 rootProject.name = 'PretendPoke'
 include 'common'
 include 'V1122'
 include 'V1165'
 include 'V1202'
-
+include 'cobblemon'
