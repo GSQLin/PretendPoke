@@ -5,6 +5,8 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/V1122/PretendPoke.V1122.main.iml" filepath="$PROJECT_DIR$/.idea/modules/V1122/PretendPoke.V1122.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/V1165/PretendPoke.V1165.main.iml" filepath="$PROJECT_DIR$/.idea/modules/V1165/PretendPoke.V1165.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/V1202/PretendPoke.V1202.main.iml" filepath="$PROJECT_DIR$/.idea/modules/V1202/PretendPoke.V1202.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/cobblemon/PretendPoke.cobblemon.main.iml" filepath="$PROJECT_DIR$/.idea/modules/cobblemon/PretendPoke.cobblemon.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/cobblemon/PretendPoke.cobblemon.test.iml" filepath="$PROJECT_DIR$/.idea/modules/cobblemon/PretendPoke.cobblemon.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/common/PretendPoke.common.main.iml" filepath="$PROJECT_DIR$/.idea/modules/common/PretendPoke.common.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/PretendPoke.main.iml" filepath="$PROJECT_DIR$/.idea/modules/PretendPoke.main.iml" />
     </modules>

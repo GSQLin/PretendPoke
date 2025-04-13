@@ -4,7 +4,9 @@ import com.cobblemon.mod.common.api.pokemon.PokemonSpecies
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity
 import com.cobblemon.mod.common.pokemon.Pokemon
 import com.cobblemon.mod.common.pokemon.Species
+import com.cobblemon.mod.common.util.getPlayer
 import me.figsq.pretendpoke.pretendpoke.api.PokeController
+import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket
 import net.minecraft.server.level.ServerLevel
 import net.minecraft.world.phys.Vec3
 import org.bukkit.Bukkit
@@ -42,6 +44,7 @@ object CobblemonPokeController: PokeController<Species, Pokemon, PokemonEntity>(
 
     override fun hideEntityForPlayer(entity: Entity, target: Player) {
         target.hideEntity(PretendPokePlugin.getInstance(),entity)
+        target.uniqueId.getPlayer()!!.connection.send(ClientboundRemoveEntitiesPacket(target.entityId))
     }
 
     override fun isPokeEntity(entity: Entity): Boolean {
